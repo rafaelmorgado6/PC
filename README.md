@@ -1,3 +1,3 @@
-#PC
+# PC
 
 Perceção e Controlo
