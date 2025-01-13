@@ -154,7 +154,7 @@ class MyRob(CRobLinkAngs):
         # Cria uma nova matriz para armazenar a atualização
         new_prob_matrix = np.zeros_like(self.prob_matrix)
 
-        # Itera por cada célula na matriz de probabilidade
+        # Itera por cada célula na prob_matrix
         for i in range(CELLROWS):
             for j in range(CELLCOLS):
                 # Guarda prob da celula (i,j)
@@ -190,20 +190,15 @@ class MyRob(CRobLinkAngs):
                     expected_value = self.expected_measures[(i, j)][direction] #> 1.0  # assume-se True para valores acima de 1.0
                     
                     variance = std_dev ** 2
-                    coef = 1 / np.sqrt(2 * np.pi * variance)  # Coeficiente de normalização
-                    expo = np.exp(-((sensor_value - expected_value) ** 2) / (2 * variance))  # Termo exponencial
-                    gauss = coef*expo
+                    gauss = (1 / np.sqrt(2 * np.pi * variance)) * (np.exp(-((sensor_value - expected_value) ** 2) / (2 * variance)))
                     match *= gauss
                         
                 # Ajusta a probabilidade da célula com base na correspondência
                 new_prob_matrix[i, j] = prob * match
-                #print(f"Célula ({i},{j}): Probabilidade Inicial: {prob:.4f}, Match: {match:.4f}, Probabilidade Ajustada: {new_prob_matrix[i, j]:.4f}")
 
         # Normaliza para que a soma das probabilidades seja 1
         total_sum = np.sum(new_prob_matrix)
         self.prob_matrix = new_prob_matrix / total_sum
-
-        #print(f"Soma Total após Normalização: {np.sum(self.prob_matrix):.4f}")
 
 
     def there_is_wall_above(self, i, j):
@@ -278,7 +273,6 @@ class MyRob(CRobLinkAngs):
                     'left': left,
                     'right': right
                 }
-                #print(f"Medidas para célula ({i},{j}): {expected_measures[(i, j)]}")
 
         return expected_measures
 
@@ -293,7 +287,7 @@ class MyRob(CRobLinkAngs):
         global move
 
         
-        # Somente exibir o print a cada 20 chamadas
+        # 20 drive_motors() -> tempo que demora do centro de uma celula ao centro da proxima
         if drive_count % 20 == 0:
             print("\n________________________________________________________________________________\n")
             print("move " + str(move))
@@ -302,8 +296,6 @@ class MyRob(CRobLinkAngs):
             print("Back: " + str(self.measures.irSensor[back_id]))
             print("Center: " + str(self.measures.irSensor[center_id]) + "\n")
             move += 1
-
-            
 
             # Usa as measures dos sensores para calcular sense
             sensor_data = {
